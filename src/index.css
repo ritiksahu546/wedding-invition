@@ -1,0 +1,492 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #f7f2ef;
+  --stone: #eae4df;
+  --events-bg: #f5f0ec;
+  --ink: #26231f;
+  --green: #384a34;
+  --green-dark: #263422;
+  --sage: #aab49a;
+  --gold: #c6ad71;
+  --line: #ded6ce;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+.font-serif-display {
+  font-family: var(--serif);
+}
+
+.font-sans-body {
+  font-family: var(--sans);
+}
+
+/* Opening sticky portrait layered beneath main paper */
+.hero-sticky {
+  min-height: 100svh;
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-date-line::before {
+  content: '—';
+  margin-right: 12px;
+}
+
+/* Interactive 3D Envelope */
+.invitation-envelope {
+  position: relative;
+  width: min(560px, 90vw);
+  height: 225px;
+  margin: 48px auto 18px;
+  perspective: 1000px;
+  transition: height 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  overflow: visible;
+}
+
+.invitation-envelope.open {
+  height: 390px;
+}
+
+.invitation-envelope::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(145deg, transparent 49.5%, #d5c8b7 50%, #e8dccd 50.8%, transparent 51%),
+    linear-gradient(215deg, transparent 49.5%, #d0c1af 50%, #e4d7c8 50.8%, transparent 51%);
+}
+
+.envelope-trigger {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 4;
+  width: 100%;
+  height: 225px;
+  padding: 0;
+  border: 1px solid #c9baa7;
+  border-radius: 3px;
+  background: linear-gradient(145deg, #eee4d7, #ded2c3);
+  color: #65584b;
+  cursor: pointer;
+  transition: background 0.3s, z-index 0.01s 0.4s, box-shadow 0.25s;
+}
+
+.envelope-trigger:hover {
+  box-shadow: 0 10px 28px rgba(53, 39, 25, 0.12);
+}
+
+.envelope-trigger::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 63%;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(155deg, #f1e8dc, #ddcdbc);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  transition: transform 0.75s cubic-bezier(0.2, 0.7, 0.2, 1);
+  backface-visibility: hidden;
+}
+
+.envelope-trigger::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(145deg, transparent 49.5%, #d5c8b7 50%, #e8dccd 50.8%, transparent 51%),
+    linear-gradient(215deg, transparent 49.5%, #d0c1af 50%, #e4d7c8 50.8%, transparent 51%);
+}
+
+.envelope-prompt {
+  position: absolute;
+  bottom: 28px;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  font: 600 11px var(--sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #65584b;
+  text-shadow: 0 1px rgba(255, 255, 255, 0.6);
+  transition: opacity 0.3s;
+}
+
+.envelope-seal {
+  position: absolute;
+  left: 50%;
+  top: 49%;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 35% 30%, #bd9570, #8c6245 76%);
+  color: #f7eddc;
+  font-size: 19px;
+  box-shadow: 0 3px 8px rgba(76, 56, 41, 0.3);
+  transition: opacity 0.25s, transform 0.4s;
+}
+
+.envelope-trigger:hover .envelope-seal {
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.invitation-envelope .date-reveal-card {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  z-index: 3;
+  width: min(500px, 88vw);
+  margin: 0;
+  padding: 24px 18px;
+  border: 1px solid #c6b889;
+  opacity: 0;
+  transform: translate(-50%, 0) scale(0.94);
+  background: linear-gradient(145deg, #fffdf8, #f1e9dc);
+  box-shadow: 0 8px 26px rgba(53, 39, 25, 0.19);
+}
+
+.invitation-envelope.open .envelope-trigger {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.invitation-envelope.open .envelope-trigger::before {
+  transform: rotateX(180deg);
+}
+
+.invitation-envelope.open .envelope-prompt,
+.invitation-envelope.open .envelope-seal {
+  opacity: 0;
+}
+
+.invitation-envelope.open .date-reveal-card.revealed {
+  animation: card-emerge 0.95s cubic-bezier(0.18, 0.78, 0.24, 1) both;
+}
+
+@keyframes card-emerge {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 14px) scale(0.9);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(-50%, -165px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -150px) scale(1);
+  }
+}
+
+@keyframes card-emerge-mobile {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 12px) scale(0.9);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(-50%, -145px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -132px) scale(1);
+  }
+}
+
+@keyframes fade-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scaleY(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.animate-fade-reveal {
+  animation: fade-reveal 0.7s ease both;
+}
+
+/* Scroll Timeline */
+.timeline-event-row {
+  opacity: 0.26;
+  transform: translateY(18px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.timeline-event-row.seen {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.timeline-marker-badge {
+  background: radial-gradient(circle at 35% 30%, #ead9a8, #b18d50 72%, #927242);
+  border: 4px solid #f5f0ec;
+  box-shadow: 0 2px 9px rgba(75, 57, 36, 0.17);
+}
+
+.watercolour-art {
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 7px 9px rgba(107, 89, 64, 0.08));
+}
+
+/* Photo Story Floating Frames */
+.photo-story-section {
+  height: 360svh;
+  position: relative;
+  background: #282321;
+  color: #fff;
+}
+
+.photo-story-stage {
+  height: 100svh;
+  min-height: 620px;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: #282321;
+  display: grid;
+  place-items: center;
+}
+
+.floating-photo-card {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: clamp(210px, 22vw, 320px);
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  box-shadow: 0 14px 40px rgba(18, 13, 22, 0.66);
+  border: 7px solid #fff;
+  border-radius: 2px;
+  opacity: 0;
+  transform-origin: center;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.floating-photo-card.float-1 {
+  left: 5%;
+  top: 14%;
+}
+.floating-photo-card.float-2 {
+  right: 5%;
+  top: 7%;
+}
+.floating-photo-card.float-3 {
+  left: 8%;
+  bottom: 7%;
+}
+.floating-photo-card.float-4 {
+  right: 8%;
+  bottom: 9%;
+}
+.floating-photo-card.float-5 {
+  left: 38%;
+  top: 2%;
+  width: clamp(170px, 17vw, 245px);
+}
+.floating-photo-card.float-6 {
+  right: 38%;
+  bottom: 2%;
+  width: clamp(170px, 17vw, 245px);
+}
+
+/* Torn Deckle-Edge RSVP Paper */
+.rsvp-paper-card {
+  position: relative;
+  width: min(890px, 94vw);
+  margin: auto;
+  padding: 125px clamp(30px, 7vw, 90px) 62px;
+  text-align: center;
+  color: #332e28;
+  background-color: #f7f5ed;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+  background-size: 320px 320px;
+  background-repeat: repeat;
+  box-shadow: 0 18px 60px rgba(22, 18, 15, 0.34);
+  clip-path: polygon(
+    0 1%, 3% 0, 6% 1%, 10% 0, 14% 1%, 18% 0, 22% 1%, 27% 0, 32% 1%, 37% 0, 42% 1%, 48% 0,
+    53% 1%, 58% 0, 63% 1%, 68% 0, 74% 1%, 80% 0, 86% 1%, 92% 0, 97% 1%, 100% 0,
+    99% 100%, 94% 99%, 89% 100%, 84% 99%, 78% 100%, 73% 99%, 68% 100%, 62% 99%, 57% 100%,
+    51% 99%, 46% 100%, 41% 99%, 35% 100%, 30% 99%, 24% 100%, 19% 99%, 13% 100%, 8% 99%,
+    3% 100%, 0 99%
+  );
+}
+
+.wax-seal-badge {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #f7ead0;
+  background: radial-gradient(circle at 35% 28%, #9f5143, #692f2c 75%);
+  box-shadow: 0 4px 10px rgba(68, 36, 32, 0.34), inset 0 0 0 4px rgba(247, 234, 208, 0.14);
+  font: italic 24px var(--serif);
+}
+
+/* FAQ Accordion Details */
+.faq-item summary {
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: '+';
+  font: 300 23px var(--sans);
+  color: #9a8b70;
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+.faq-item[open] summary::after {
+  content: '−';
+}
+
+/* Responsive adjustments */
+@media (max-width: 700px) {
+  .invitation-envelope {
+    width: min(520px, 90vw);
+    height: 190px;
+    margin-top: 40px;
+  }
+
+  .invitation-envelope.open {
+    height: 350px;
+  }
+
+  .envelope-trigger {
+    height: 190px;
+  }
+
+  .envelope-prompt {
+    bottom: 21px;
+    font-size: 10px;
+  }
+
+  .envelope-seal {
+    width: 40px;
+    height: 40px;
+  }
+
+  .invitation-envelope .date-reveal-card {
+    padding: 20px 12px;
+  }
+
+  .invitation-envelope.open .date-reveal-card.revealed {
+    animation-name: card-emerge-mobile;
+  }
+
+  .photo-story-section {
+    height: 310svh;
+  }
+
+  .photo-story-stage {
+    min-height: 560px;
+  }
+
+  .floating-photo-card {
+    width: clamp(145px, 39vw, 205px);
+    border-width: 5px;
+  }
+
+  .floating-photo-card.float-1 {
+    left: 2%;
+    top: 13%;
+  }
+  .floating-photo-card.float-2 {
+    right: 2%;
+    top: 8%;
+  }
+  .floating-photo-card.float-3 {
+    left: 2%;
+    bottom: 8%;
+  }
+  .floating-photo-card.float-4 {
+    right: 2%;
+    bottom: 9%;
+  }
+  .floating-photo-card.float-5 {
+    left: 32%;
+    top: 3%;
+    width: clamp(130px, 34vw, 175px);
+  }
+  .floating-photo-card.float-6 {
+    right: 32%;
+    bottom: 3%;
+    width: clamp(130px, 34vw, 175px);
+  }
+
+  .rsvp-paper-card {
+    padding: 112px 22px 45px;
+    width: 96vw;
+  }
+
+  .wax-seal-badge {
+    width: 78px;
+    height: 78px;
+    font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .timeline-event-row {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .invitation-envelope,
+  .envelope-trigger::before,
+  .invitation-envelope.open .date-reveal-card.revealed {
+    transition: none;
+    animation: none;
+  }
+  .invitation-envelope.open .date-reveal-card.revealed {
+    opacity: 1;
+    transform: translate(-50%, -145px) scale(1);
+  }
+}
